@@ -1,0 +1,45 @@
+{% load static %}
+<!-- Start Categories of The Month -->
+<section class="container py-5">
+    <div class="row text-center pt-3">
+        <div class="col-lg-6 m-auto">
+            <h1 class="h1">Categories of The Month</h1>
+            <p>
+                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt mollit anim id est laborum.
+            </p>
+        </div>
+    </div>
+
+    <div class="row text-center">
+        {% for category in categories %}
+        <div class="col-6 col-md-3 p-3">
+            <a href="{% url 'category_filter' category.slug %}">
+                {% if category.image %}
+                <img src="{{ category.image.url }}" class="category-img rounded-circle border">
+                {% else %}
+                <img src="{% static 'img/not.jpg' %}" class="category-img rounded-circle border">
+                {% endif %}
+            </a>
+            <h6 class="mt-2">{{ category.name }}</h6>
+            <p><a class="btn btn-danger btn-sm">Go Shop</a></p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+<!-- End Categories of The Month -->
+
+<style>
+.category-img {
+    width: 80px;  /* Rasm o'lchami kichraydi */
+    height: 80px;
+    object-fit: cover; /* Rasm to'g'ri chiqishi uchun */
+}
+h6 {
+    font-size: 14px; /* Matn hajmi kichraydi */
+}
+.btn-sm {
+    font-size: 12px;
+    padding: 5px 10px;
+}
+</style>
