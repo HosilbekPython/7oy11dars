@@ -17,7 +17,7 @@
 
                 <div class="col-12 col-md-4 mb-4">
                     <div class="card h-100">
-                        <a href="shop-single.html">
+                        <a href="{% url 'product_detail' product.pk %}">
                             <div class="position-relative">
                                 <!-- Kategoriya nomi -->
                                 <span class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 rounded"
@@ -58,7 +58,7 @@
                                 </li>
                                 <li class="text-muted text-right">$240.00</li>
                             </ul>
-                            <a href="shop-single.html" class="h2 text-decoration-none text-dark">{{ product.name }}</a>
+                            <a href="{% url 'product_detail' product.pk %}" class="h2 text-decoration-none text-dark">{{ product.name }}</a>
                             <p class="card-text">
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt in culpa qui officia deserunt.
                             </p>

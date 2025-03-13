@@ -3,9 +3,12 @@ from tkinter.font import names
 from django.urls import path
 
 
-from .views import HomePageCategoryAndProduct , CategoryFilterView
+from .views import HomePageCategoryAndProduct , CategoryFilterView , ProductDetaliViews , CommentSaveViews , DeleteCommentView
 
 urlpatterns = [
     path('' , HomePageCategoryAndProduct.as_view()) ,
-    path('category/<str:slug>/' , CategoryFilterView.as_view() , name = 'category_filter')
+    path('category/<str:slug>/' , CategoryFilterView.as_view() , name = 'category_filter') ,
+    path('produkt_detail/<int:product_id>/' , ProductDetaliViews.as_view() , name = 'product_detail') ,
+    path('produkt_detail/<int:product_id>/comment/', CommentSaveViews.as_view(), name="save_comment"),
+    path('produkt_detail_delete/<int:product_id>/comment_delete/<int:comment_id>/', DeleteCommentView.as_view(), name="delete_comment"),
 ]
