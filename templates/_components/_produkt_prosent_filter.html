@@ -1,0 +1,164 @@
+{% load static %}
+    <!-- Start Featured Product -->
+
+    <section class="bg-light">
+        <div class="container py-5">
+            <div class="row text-center py-3">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h1">Eng katta chegirmadagi maxsulotlar</h1>
+                    <p>
+                        Bular eng katta chegirmadagi maxsulotlarimiz
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+
+                {% for product in products_order_by_prosent %}
+                    <div class="col-12 col-md-4 mb-4">
+                        <div class="card h-100">
+                            <a href="{% url 'product_detail' product.pk %}">
+                                <div class="position-relative">
+                                    <span class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 rounded"
+                                          style="z-index: 10; margin: 10px; font-weight: bold;">
+                                        {{ product.category.name }}
+                                    </span>
+
+                                    <div id="carousel{{ product.id }}" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            {% for image_object in product.product_images.all %}
+                                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                                    <img src="{{ image_object.image.url }}" class="d-block w-100" alt="Mahsulot rasmi">
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ product.id }}" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ product.id }}" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- Mahsulot ma'lumotlari -->
+                            <div class="card-body">
+                                <ul class="list-unstyled d-flex justify-content-between">
+                                    <li>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-warning fa fa-star"></i>
+                                        <i class="text-muted fa fa-star"></i>
+                                    </ul>
+                                <a href="{% url 'product_detail' product.pk %}" class="h2 text-decoration-none text-dark">{{ product.name }}</a>
+                                <p class="card-text">
+                                    {{ product.descriotion|truncatechars:100 }}
+                                </p>
+
+                                <!-- Narxni chiroyli ko'rsatish -->
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="price-container">
+                                        <span class="old-price">${{ product.price }}</span>
+                                        <span class="discount-badge">-{{ product.discount }}%</span>
+                                    </div>
+                                    <span class="new-price">${{ product.get_price }}</span>
+                                </div>
+
+                                <p class="text-muted">Sotib olinganlar (24)</p>
+
+                                <!-- Sotib olish va Batafsil tugmalari -->
+                                <div class="d-flex justify-content-between mt-3">
+                                    <a href="{% url 'product_detail' product.pk %}" class="btn btn-success btn-sm">Sotib olish</a>
+                                    <a href="{% url 'product_detail' product.pk %}" class="btn btn-outline-primary btn-sm">Batafsil</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </section>
+    <!-- End Featured Product -->
+
+
+
+<style>
+    .carousel-inner img {
+    width: 100%;
+    height: 250px; /* Barcha rasmlarni bir xil balandlikda qilish */
+    object-fit: cover; /* Rasmlar sichqoncha bilan qirqilsa ham, nisbati buzilmaydi */
+    border-radius: 10px; /* Burchaklarni yumshatish (ixtiyoriy) */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    background: none !important; /* Orqa fonni olib tashlash */
+    border: none !important; /* Chegaralarni olib tashlash */
+    filter: invert(1); /* Ikonkani oq rangda ko‘rsatish */
+}
+
+.old-price {
+    text-decoration: line-through;
+    font-size: 14px;
+    color: #888;
+}
+
+.new-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+}
+
+.discount-badge {
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 7px;
+    border-radius: 5px;
+}
+
+.btn-buy {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.btn-buy:hover {
+    background: #218838;
+}
+
+.btn-detail {
+    border: 2px solid #007bff;
+    color: #007bff;
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.btn-detail:hover {
+    background: #007bff;
+    color: white;
+}
+
+
+.discount-badge {
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 7px;
+    border-radius: 5px;
+    margin-left: 5px;
+}
+</style>

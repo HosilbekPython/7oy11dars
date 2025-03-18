@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.core.validators import FileExtensionValidator
 
 # Create your models here.
 
@@ -8,11 +9,20 @@ class Category(models.Model):
     slug = models.SlugField(max_length=100 , unique=True)
     image = models.ImageField(upload_to="category/image/" , null=True , blank=True)
     parent = models.ForeignKey('self' , on_delete=models.SET_NULL , null=True , blank=True)
+    is_special = models.BooleanField(default=False)
 
     def __str__(self):
         if not self.parent:
             return self.name
         return f"{self.parent.name} : {self.name}"
+
+    def get_descendants(self):
+        categories = [self]
+        subcategories = Category.objects.filter(parent=self)
+        for subcat in subcategories:
+            categories.extend(subcat.get_descendants())
+        return categories
+
 
 VOLUMES = {
     "kg":"Kilogram",
@@ -33,6 +43,17 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_image(self):
+        images = self.images.all()
+        if images:
+            return images[0].image.url
+        return "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500"
+
+    def get_price(self):
+        if self.discount > 0:
+            return self.price - self.price * self.discount / 100
+        return self.price
+
 
 class ProduktImage(models.Model):
     image = models.ImageField(upload_to="product/images/")
@@ -49,3 +70,27 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.user.username}"
+
+
+class Promotion(models.Model):
+    product = models.ForeignKey(Product , on_delete=models.CASCADE)
+    title = models.CharField(max_length=150)
+    content = models.CharField(max_length=150)
+    text = models.CharField(max_length=300)
+    image = models.FileField(upload_to="promotion/image/" , null=True , blank=True , validators=[FileExtensionValidator(allowed_extensions=["png" , "jpg"])])
+
+    def __str__(self):
+        return self.title
+
+
+
+
+
+
+
+
+
+
+
+
+

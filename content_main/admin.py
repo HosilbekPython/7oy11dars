@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Category , Product , ProduktImage , Comment
+from .models import Category , Product , ProduktImage , Comment , Promotion
 
 # Register your models here.
 
@@ -36,3 +36,4 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(ProduktImage)
 admin.site.register(Comment)
+admin.site.register(Promotion)
