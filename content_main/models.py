@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.core.validators import FileExtensionValidator
 
@@ -24,6 +25,23 @@ class Category(models.Model):
         return categories
 
 
+class Filter(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100 , unique=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="filters"
+    )
+
+    def __str__(self):
+        return self.name
+
+    def clean(self):
+        if not self.category.products.exists() and not Category.objects.filter(parent=self.category).exists():
+            raise ValidationError("Filter faqat mahsulotga ega bo‘lgan kategoriyaga qo‘shilishi mumkin!")
+
+
+
+
 VOLUMES = {
     "kg":"Kilogram",
     "l": "Liter",
@@ -38,7 +56,8 @@ class Product(models.Model):
     discount = models.IntegerField(default=0)
     quantitiy = models.IntegerField(default=50)
     volume = models.CharField(max_length=4 , choices=VOLUMES)
-    category = models.ForeignKey(Category , on_delete=models.PROTECT)
+    category = models.ForeignKey(Category , on_delete=models.PROTECT , related_name="products")
+    filters = models.ManyToManyField(Filter , null=True , blank=True)
 
     def __str__(self):
         return self.name
@@ -68,6 +87,8 @@ class Comment(models.Model):
     product = models.ForeignKey(Product , on_delete=models.CASCADE , related_name='comment')
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    reyting = models.IntegerField(null=True , blank=True)
+
     def __str__(self):
         return f"{self.user.username}"
 
@@ -82,8 +103,43 @@ class Promotion(models.Model):
     def __str__(self):
         return self.title
 
+class Order(models.Model):
+    user = models.ForeignKey(User , on_delete=models.SET_NULL  , null=True)
+    create = models.DateTimeField(auto_now_add=True)
+    discontinued = models.BooleanField(default=False)
+    price = models.DecimalField(max_digits=15 , decimal_places=2)
+
+    def __str__(self):
+        return f"{self.user.usename} - {self.create}"
 
 
+class OrderProduct(models.Model):
+    order = models.ForeignKey(Order , on_delete=models.CASCADE)
+    product = models.ForeignKey(Product , on_delete=models.SET_NULL  , null=True)
+    quantitiy = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.product.name}"
+
+class City(models.Model):
+    name = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.name
+
+
+class DeliverAddress(models.Model):
+    order = models.ForeignKey(Order , on_delete=models.CASCADE)
+    name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    phone_number = models.CharField(max_length=13)
+    city = models.ForeignKey(City , on_delete=models.SET_NULL  , null=True)
+    address = models.CharField(max_length=250)
+    comment = models.CharField(max_length=1000 , null=True , blank=True)
+    delivered = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.name} - {self.last_name}"
 
 
 

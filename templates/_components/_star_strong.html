@@ -1,10 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Rating</title>
+    <style>
+        .stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+        }
+        .star {
+            font-size: 30px;
+            cursor: pointer;
+            color: gray;
+        }
+        .star:hover,
+        .star:hover ~ .star,
+        .star.selected,
+        .star.selected ~ .star {
+            color: gold;
+        }
+    </style>
 </head>
 <body>
+    <form>
+        <div class="stars">
+            <span class="star" data-value="5">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="1">★</span>
+        </div>
+        <input type="text" id="rating" readonly placeholder="Tanlangan baho">
+    </form>
 
+    <script>
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+
+        function updateStars(value) {
+            stars.forEach(star => {
+                star.classList.remove('selected');
+                if (star.getAttribute('data-value') <= value) {
+                    star.classList.add('selected');
+                }
+            });
+        }
+
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                const value = this.getAttribute('data-value');
+                ratingInput.value = value;
+                updateStars(value);
+            });
+        });
+    </script>
 </body>
 </html>
