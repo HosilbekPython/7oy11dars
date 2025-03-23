@@ -27,71 +27,73 @@
                     </ul>
                 </div>
 
-                <form method="get">
-    <ul class="list-unstyled templatemo-accordion">
-        {% if subcategories %}
-        <li class="pb-3">
-            <button class="btn btn-link text-decoration-none d-flex justify-content-between h3 w-100"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#subCategoryCollapse"
-                    {% if selected_category %} aria-expanded="true" {% else %} aria-expanded="false" {% endif %}>
-                Sub Kategoriya <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
-            </button>
-            <ul id="subCategoryCollapse" class="collapse list-unstyled ps-3 {% if selected_category %} show {% endif %}">
-                <li>
-                    <label>
-                        <input type="radio" name="subcategories" value=""
-                            {% if not selected_subcategories %} checked {% endif %}>
-                        Barchasi
-                    </label>
-                </li>
-                {% for subcategory in subcategories %}
-                    <li>
-                        <label>
-                            <input type="radio" name="subcategories" value="{{ subcategory.slug }}"
-                                {% if subcategory.slug in selected_subcategories %} checked {% endif %}>
-                            {{ subcategory.name }}
-                        </label>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <ul class="list-unstyled templatemo-accordion">
+                        {% if subcategories %}
+                        <li class="pb-3">
+                            <button class="btn btn-link text-decoration-none d-flex justify-content-between h3 w-100"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#subCategoryCollapse"
+                                    {% if selected_category %} aria-expanded="true" {% else %} aria-expanded="false" {% endif %}>
+                                Sub Kategoriya <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
+                            </button>
+                            <ul id="subCategoryCollapse" class="collapse list-unstyled ps-3 {% if selected_category %} show {% endif %}">
+                                <li>
+                                    <label>
+                                        <input type="radio" name="subcategories" value=""
+                                            {% if not selected_subcategories %} checked {% endif %}>
+                                        Barchasi
+                                    </label>
+                                </li>
+                                {% for subcategory in subcategories %}
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="subcategories" value="{{ subcategory.slug }}"
+                                                {% if subcategory.slug in selected_subcategories %} checked {% endif %}>
+                                            {{ subcategory.name }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                {% if filters %}
+                <ul class="list-unstyled templatemo-accordion">
+                    <li class="pb-3">
+                        <!-- Filterlar tugmasi -->
+                        <a href="javascript:void(0);" class="btn btn-link text-decoration-none d-flex justify-content-between h3 w-100"
+                           data-bs-toggle="collapse"
+                           data-bs-target="#filterCollapse"
+                           aria-expanded="{% if selected_filters %}true{% else %}false{% endif %}"
+                           aria-controls="filterCollapse">
+                            Filterlar <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
+                        </a>
+
+                        <!-- Filterlarni ochib-yopuvchi qismi -->
+                        <div id="filterCollapse" class="collapse {% if selected_filters %}show{% endif %}">
+                            <ul class="list-unstyled ps-3">
+                                {% for filter in filters %}
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" name="filters" value="{{ filter.slug }}"
+                                                {% if filter.slug in selected_filters %} checked {% endif %}>
+                                            {{ filter.name }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </li>
-                {% endfor %}
-            </ul>
-        </li>
-        {% endif %}
-    </ul>
-
-{% if filters %}
-<ul class="list-unstyled templatemo-accordion">
-    <li class="pb-3">
-        <!-- Filterlar tugmasi -->
-        <a href="javascript:void(0);" class="btn btn-link text-decoration-none d-flex justify-content-between h3 w-100"
-           data-bs-toggle="collapse"
-           data-bs-target="#filterCollapse"
-           aria-expanded="{% if selected_filters %}true{% else %}false{% endif %}"
-           aria-controls="filterCollapse">
-            Filterlar <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
-        </a>
-
-        <!-- Filterlarni ochib-yopuvchi qismi -->
-        <div id="filterCollapse" class="collapse {% if selected_filters %}show{% endif %}">
-            <ul class="list-unstyled ps-3">
-                {% for filter in filters %}
-                    <li>
-                        <label>
-                            <input type="checkbox" name="filters" value="{{ filter.slug }}"
-                                {% if filter.slug in selected_filters %} checked {% endif %}>
-                            {{ filter.name }}
-                        </label>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </li>
-</ul>
-{% endif %}
+                </ul>
+                {% endif %}
 
 
-    <button type="submit" class="btn btn-primary">Filterlash</button>
-</form>
+                    <button type="submit" class="btn btn-primary">Filterlash</button>
+                </form>
 
 
             </div>

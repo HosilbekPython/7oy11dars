@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView , DetailView , CreateView, UpdateView , DeleteView
 from unicodedata import category
 
+
 from .models import Category , Product , Comment , Promotion , Filter
 from .forms import CommentForms
 from django.urls import reverse_lazy
@@ -30,50 +31,59 @@ class ShopingView(ListView):
     template_name = 'shop.html'
 
     def get_queryset(self):
-        queryset = Product.objects.all().order_by('-discount')
-        category_slug = self.kwargs.get("category_slug")
-        selected_subcategories = self.request.GET.getlist('subcategories')
-        selected_filters = self.request.GET.getlist('filters')
 
+        queryset = Product.objects.all().order_by('-discount')
+        return queryset
+
+    def post(self, request, *args, **kwargs):
+
+        selected_subcategories = request.POST.getlist('subcategories')
+        selected_filters = request.POST.getlist('filters')
+        category_slug = self.kwargs.get("category_slug")
+
+
+        queryset = self.get_queryset()
         if category_slug:
             category = Category.objects.filter(slug=category_slug).first()
             if category:
                 queryset = queryset.filter(category__in=category.get_descendants())
 
-        # **"Barchasi" tanlanganda hamma mahsulotlar chiqishi kerak**
         if selected_subcategories and "" not in selected_subcategories:
             queryset = queryset.filter(category__slug__in=selected_subcategories)
 
-        # Filterlar bo‘yicha saralash
         if selected_filters:
             queryset = queryset.filter(filters__slug__in=selected_filters).distinct()
 
-        return queryset
+        # Kontekstni yaratish
+        self.object_list = queryset  # object_list ni o'rnatish
+        context = self.get_context_data()
+        return render(request, self.template_name, context)
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
+
+        context = super().get_context_data(**kwargs)
         category_slug = self.kwargs.get("category_slug")
 
-        # Asosiy kategoriyalarni olish
+
         context['categories'] = Category.objects.filter(parent=None)
         context['selected_category'] = None
         context['subcategories'] = None
-        context['selected_subcategories'] = self.request.GET.getlist('subcategories')
-        context['selected_filters'] = self.request.GET.getlist('filters')
-        context['filters'] = None  # Filterlarni bosh qilib qo'yamiz
+        context['selected_subcategories'] = self.request.POST.getlist('subcategories', [])
+        context['selected_filters'] = self.request.POST.getlist('filters', [])
+        context['filters'] = None
 
         if category_slug:
             selected_category = Category.objects.filter(slug=category_slug).first()
             context['selected_category'] = selected_category
 
             if selected_category:
-                # Faqat asosiy kategoriya tanlanganda subkategoriyalarni chiqaramiz
+                # Subkategoriyalar
                 context['subcategories'] = Category.objects.filter(parent=selected_category)
-
-                # **Filterlar faqat asosiy kategoriya bo‘yicha chiqishi kerak**
+                # Filterlar
                 context['filters'] = Filter.objects.filter(category=selected_category)
 
         return context
+
 
 
 class CategoryFilterView(ListView):

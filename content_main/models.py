@@ -9,7 +9,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100 , unique=True)
     slug = models.SlugField(max_length=100 , unique=True)
     image = models.ImageField(upload_to="category/image/" , null=True , blank=True)
-    parent = models.ForeignKey('self' , on_delete=models.SET_NULL , null=True , blank=True)
+    parent = models.ForeignKey('self' , on_delete=models.SET_NULL , null=True , blank=True , related_name='subcategories')
     is_special = models.BooleanField(default=False)
 
     def __str__(self):
@@ -57,6 +57,7 @@ class Product(models.Model):
     quantitiy = models.IntegerField(default=50)
     volume = models.CharField(max_length=4 , choices=VOLUMES)
     category = models.ForeignKey(Category , on_delete=models.PROTECT , related_name="products")
+    subcategory = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="subcategory_products", null=True, blank=True)
     filters = models.ManyToManyField(Filter , null=True , blank=True)
 
     def __str__(self):
